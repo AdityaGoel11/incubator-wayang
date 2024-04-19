@@ -895,8 +895,6 @@ class DataQuanta[Out: ClassTag](val operator: ElementaryOperator, outputIndex: I
 
   override def toString = s"DataQuanta[$output]"
 
-  def withSchema(schema: Array[String]): DataFrame = new DataFrame(this, schema)
-
 
 }
 

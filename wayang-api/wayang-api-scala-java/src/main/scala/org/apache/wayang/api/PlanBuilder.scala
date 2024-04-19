@@ -23,6 +23,7 @@ package org.apache.wayang.api
  */
 import org.apache.commons.lang3.Validate
 import org.apache.wayang.api
+import org.apache.wayang.api.dataframe.DataFrame
 import org.apache.wayang.basic.data.Record
 import org.apache.wayang.basic.operators.{CollectionSource, ObjectFileSource, TableSource, TextFileSource}
 import org.apache.wayang.commons.util.profiledb.model.Experiment
@@ -114,6 +115,8 @@ class PlanBuilder(wayangContext: WayangContext, private var jobName: String = nu
     */
   def readTextFile(url: String): DataQuanta[String] = load(new TextFileSource(url))
 
+  def readCsvFile(url:String) : DataFrame[String] = load2(new TextFileSource(url))
+
 
   /**
    * Read a object's file and provide it as a dataset of [[Object]]s.
@@ -157,6 +160,9 @@ class PlanBuilder(wayangContext: WayangContext, private var jobName: String = nu
     */
   def load[T: ClassTag](source: UnarySource[T]): DataQuanta[T] = wrap(source)
 
+
+  def load2[T: ClassTag](source: UnarySource[T]): DataFrame[T] = wrap2(source,null)
+
   /**
     * Execute a custom [[Operator]].
     *
@@ -177,11 +183,17 @@ class PlanBuilder(wayangContext: WayangContext, private var jobName: String = nu
   implicit private[api] def wrap[T: ClassTag](operator: ElementaryOperator): DataQuanta[T] =
     PlanBuilder.wrap[T](operator)(classTag[T], this)
 
+  implicit private[api] def wrap2[T: ClassTag](operator: ElementaryOperator,schema: List[String]): DataFrame[T] =
+    PlanBuilder.wrap2[T](operator,schema)(classTag[T], this)
+
 }
 
 object PlanBuilder {
 
   implicit private[api] def wrap[T: ClassTag](operator: ElementaryOperator)(implicit planBuilder: PlanBuilder): DataQuanta[T] =
     api.wrap[T](operator)
+
+  implicit private[api] def wrap2[T: ClassTag](operator: ElementaryOperator,schema: List[String])(implicit planBuilder: PlanBuilder): DataFrame[T] =
+    api.wrap2[T](operator,schema)
 
 }

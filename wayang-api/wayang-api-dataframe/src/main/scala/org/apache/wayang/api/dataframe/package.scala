@@ -16,12 +16,11 @@
  * limitations under the License.
  */
 
-package org.apache.wayang
-
-import org.apache.wayang.api.dataframe.DataFrame
+package org.apache.wayang.api
 
 import _root_.java.lang.{Class => JavaClass, Iterable => JavaIterable}
 import _root_.java.util.function.{Consumer, ToLongBiFunction, ToLongFunction}
+
 import org.apache.wayang.basic.data.{Record, Tuple2 => WayangTuple2}
 import org.apache.wayang.core.api.WayangContext
 import org.apache.wayang.core.function.FunctionDescriptor.{SerializableBinaryOperator, SerializableFunction, SerializablePredicate}
@@ -36,13 +35,13 @@ import scala.language.implicitConversions
 import scala.reflect.ClassTag
 
 /**
-  * Provides implicits for the basic Wayang API.
-  */
+ * Provides implicits for the basic Wayang API.
+ */
 /**
  * TODO: add the documentation in the implicit of org.apache.wayang.api
  * labels: documentation,todo
  */
-package object api {
+package object dataframe{
 
   implicit def basicDataUnitType[T](implicit classTag: ClassTag[T]): BasicDataUnitType[T] = {
     val cls = classTag.runtimeClass.asInstanceOf[JavaClass[T]]
@@ -148,9 +147,6 @@ package object api {
 
   implicit private[api] def wrap[Out: ClassTag](op: ElementaryOperator)(implicit planBuilder: PlanBuilder): DataQuanta[Out] =
     new DataQuanta[Out](op)
-
-  implicit private[api] def wrap2[Out: ClassTag](op: ElementaryOperator, schema: List[String])(implicit planBuilder: PlanBuilder): DataFrame[Out] =
-    new DataFrame[Out](op,schema)
 
   implicit def elevateRecordDataQuanta(dataQuanta: DataQuanta[Record]): RecordDataQuanta =
     new RecordDataQuanta(dataQuanta)
