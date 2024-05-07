@@ -23,11 +23,10 @@ import java.net.URI
 import java.nio.file.{Files, Paths}
 import java.sql.{Connection, Statement}
 import java.util.function.Consumer
-
 import org.junit.{Assert, Test}
 import org.apache.wayang.basic.WayangBasics
 import org.apache.wayang.core.api.{Configuration, WayangContext}
-import org.apache.wayang.core.function.FunctionDescriptor.ExtendedSerializablePredicate
+import org.apache.wayang.core.function.FunctionDescriptor.{ExtendedSerializableFunction, ExtendedSerializablePredicate}
 import org.apache.wayang.core.function.{ExecutionContext, TransformationDescriptor}
 import org.apache.wayang.core.util.fs.LocalFileSystem
 import org.apache.wayang.java.Java

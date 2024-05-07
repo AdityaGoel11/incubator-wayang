@@ -16,6 +16,17 @@
  * limitations under the License.
  */
 
+import org.apache.spark.SparkConf
+import org.apache.spark.sql.SparkSession
+import org.apache.wayang.core.api.{Configuration, WayangContext}
+import org.apache.wayang.core.function.ExecutionContext
+import org.apache.wayang.core.function.FunctionDescriptor.ExtendedSerializableFunction
+import org.apache.wayang.core.function.ExecutionContext
+import org.apache.wayang.core.plan.wayangplan.{Operator, UnaryToUnaryOperator}
+import org.apache.wayang.core.types.DataSetType
+import org.apache.wayang.core.util.ReflectionUtils
+
+
 import org.apache.wayang.api.PlanBuilder
 import org.apache.wayang.core.api.{Configuration, WayangContext}
 import org.apache.wayang.java.Java
@@ -29,12 +40,79 @@ object DataframeTest {
     val planBuilder = new PlanBuilder(wayangContext, "test")
 
     val homeDirectory: String = System.getProperty("user.home")
+
+    val start = System.currentTimeMillis()
+
     val c = planBuilder
-      .readCsvFile(s"file://$homeDirectory/demo.txt")
-      .withSchema(List("name","age","size"))
-      .project(List("name"))
+      .readCsvFile(s"file://$homeDirectory/data.txt")
+      .withSchema(List("name","age","gender","city","income"))
+      .project(List("name", "age", "income"))
+      .aggregate("sum(age), max(income)")
       .collect()
-//    c.foreach(println)
-//    planBuilder.buildAndExecute()
+
+    val end = System.currentTimeMillis()
+
+    // Print time taken
+    println("Time taken: " + (end - start) + " milliseconds")
+
   }
 }
+
+//object DataframeTest {
+//  def main(args: Array[String]): Unit = {
+//    val configuration = new Configuration()
+//
+//    val wayangContext = new WayangContext(configuration).withPlugin(Java.basicPlugin())
+//    val planBuilder = new PlanBuilder(wayangContext, "test")
+//
+//    val homeDirectory: String = System.getProperty("user.home")
+//    val df = planBuilder
+//      .readCsvFile(s"file://$homeDirectory/data.txt")
+//      .withSchema(List("Name","Age","Gender","City","Income"))
+//      .filter("Age > 30;Gender == Male")
+//      .collect()
+
+    // Perform aggregation
+//    val aggregatedDF = df.aggregate("avg(Age)", "sum(Income)")
+//      .collect()
+
+    // Collect the results
+//    val results = aggregatedDF.collect()
+    //    planBuilder.buildAndExecute()
+//  }
+//}
+
+
+
+
+//import org.apache.wayang.api.PlanBuilder
+//import org.apache.wayang.core.api.{Configuration, WayangContext}
+//import org.apache.wayang.java.Java
+//
+//object DataframeTest {
+//  def main(args: Array[String]): Unit = {
+//    val configuration = new Configuration()
+//
+//    val wayangContext = new WayangContext(configuration).withPlugin(Java.basicPlugin())
+//    val planBuilder = new PlanBuilder(wayangContext, "test")
+//
+//    val homeDirectory: String = System.getProperty("user.home")
+//
+//    // Read the CSV file
+//    val dataframe = planBuilder
+//      .readCsvFile(s"file://$homeDirectory/data.txt")
+//      .withSchema(List("Name","Age","Gender","City","Education","Income"))
+//
+//    // Apply filter operation
+////    val filteredDataframe = dataframe.filter("Age > 30")
+//
+//    // Project to select required columns
+//    val projectedDataframe = dataframe.project(List("Name","Age", "Gender")).collect()
+//
+//    // Collect the results
+////    val result = projectedDataframe.collect()
+////
+////    // Print the result
+////    result.foreach(println)
+//  }
+//}
